@@ -1,0 +1,111 @@
+[main]
+    run_name = 'neptune_1'
+    experiment_class = 'Neptune Ocean - Forced'
+
+[paths]
+    data = 'data/datasets/all_1_deg'
+    experiments = 'experiments'
+
+[random]
+    seed = 419
+
+[model]
+cls = 'NeptuneOceaNO'
+metrics = []
+    [model.args]
+        dim = 256
+        n_modes = [2,2]
+        img_shape = [181,360]
+        kernel_size = 3
+        stride = 1
+        padding = 1
+        n_encdec_layers = 2
+        n_fno_layers = 2
+        lifting_channel_ratio = 2
+        projection_channel_ratio = 2
+        non_linearity = "gelu"
+        norm = "cond_ln"
+        complex_data = false
+        use_channel_mlp = true
+        dropout = 0.2
+        channel_mlp_expansion = 0.5
+        channel_mlp_skip = "soft-gating"
+        fno_skip = "linear"
+        fno_block_precision = "full"
+        factorization = "dense"
+        rank = 1.0
+        fixed_rank_modes = false
+        implementation = "factorized"
+        separable = false
+        preactivation = false
+        conv_module = "spherical"
+        solar_radiation = true
+
+[data]
+    fill_value = 0.0
+    epsilon = 1e-7
+    perlin_noise = false
+    avg_atmos = false
+    [data.drivers]
+        levels = [300, 500, 600, 700, 850, 925, 1000]
+        depths = [0.50576, 1.5558553, 2.6676817, 8.092519, 26.5583, 53.850636, 108.03028, 199.7900, 300.8875, 508.6399, 1045.854, 1945.296, 2955.570, 5089.479]
+        [data.drivers.input]
+            [data.drivers.input.atmos]
+                fields_3d = []
+                fields_2d = ['2m_temperature', '2m_dewpoint_temperature', '10m_u_component_of_wind', '10m_v_component_of_wind', 'mean_sea_level_pressure']
+            [data.drivers.input.ocean]
+                fields_3d = ['thetao_oras', 'so_oras', 'uo_oras', 'vo_oras']
+                fields_2d = ['zos_oras', 'mlotst_oras', 'siconc_oras', 'sithick_oras']
+        [data.drivers.output]
+            [data.drivers.output.atmos]
+                fields_3d = []
+                fields_2d = []
+            [data.drivers.output.ocean]
+                fields_3d = ['thetao_oras', 'so_oras', 'uo_oras', 'vo_oras']
+                fields_2d = ['zos_oras', 'mlotst_oras', 'siconc_oras', 'sithick_oras']
+
+[train]
+    epochs = 150
+    batch_size = 1
+    accumulation_steps = 1
+    insteps = 2
+    outsteps = 2
+    lead_time = 1
+    rollout = 1
+    is_residual = true
+    use_noise = false
+    drop_remainder = true
+    shuffle = true
+    train_years = [1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016]
+    valid_years = [2017, 2018]
+
+[loss]
+    cls = 'nn.L1Loss'
+    [loss.args]
+
+[optimizer]
+    cls = 'torch.optim.AdamW'
+    [optimizer.args]
+        lr = 5e-4
+        betas = [0.9, 0.95]
+        weight_decay = 1e-2
+
+[scheduler]
+    [scheduler.warmup]
+        total_iters = 10 # warmup epochs
+        start_factor = 0.001
+        end_factor = 1.0
+    [scheduler.annealing]
+        eta_min = 5e-8 # minimum learning rate
+
+[lightning]
+    accelerator = "cuda"
+    precision = "32-true"
+
+[torch]
+    matmul_precision = "medium"
+    dtype = 'torch.float32'
+
+[logger]
+    discord_webhook = ""
+    slack_webhook = ""
