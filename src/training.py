@@ -114,7 +114,7 @@ experiments_dir = config.paths.experiments
 seed = config.random.seed
 
 # pytorch
-dtype = eval(config.torch.dtype) # NOTE: CODE INJECTION RISK
+dtype = eval(config.torch.dtype)
 matmul_precision = config.torch.matmul_precision
 
 # lightning
@@ -122,7 +122,7 @@ accelerator = config.lightning.accelerator
 precision = config.lightning.precision
 
 # model
-model_cls = eval(config.model.cls) # NOTE: CODE INJECTION RISK
+model_cls = eval(config.model.cls)
 model_args = dict(config.model.args)
 
 # data
@@ -133,15 +133,15 @@ perlin_noise = config.data.perlin_noise
 avg_atmos = config.data.avg_atmos if hasattr(config.data, "avg_atmos") else False
 
 # metrics
-metrics_list = [eval(mts) for mts in config.model.metrics] # NOTE: CODE INJECTION RISK
+metrics_list = [eval(mts) for mts in config.model.metrics]
 
 # loss
-loss_cls = eval(config.loss.cls) # NOTE: CODE INJECTION RISK
+loss_cls = eval(config.loss.cls)
 loss_cls_name = config.loss.cls
 loss_args = dict(config.loss.args)
 
 # optimizer
-optimizer_cls = eval(config.optimizer.cls) # NOTE: CODE INJECTION RISK
+optimizer_cls = eval(config.optimizer.cls)
 optimizer_args = dict(config.optimizer.args)
 
 # scheduler
@@ -162,6 +162,7 @@ rollout = config.train.rollout
 is_residual = config.train.is_residual
 use_noise = config.train.use_noise
 drop_remainder = config.train.drop_remainder
+num_workers = config.train.num_workers if hasattr(config.train, "num_workers") else 0
 shuffle = config.train.shuffle
 train_years = config.train.train_years
 valid_years = config.train.valid_years
@@ -189,10 +190,6 @@ mlflow.log_artifact(local_path=args.config)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 #  Environment setup
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-
-# update data directory according to the environment
-if ocean in ['cglors', 'glorys', 'oras5']:
-    data_dir = data_dir + f'-{ocean}'
 
 # get the source directory of the run
 run_dir = os.path.join(experiments_dir, run_name)
@@ -508,20 +505,18 @@ log_message(log_fns, f'Dataset samplers initialized')
 
 # load dataloader
 train_loader = DataLoader(
-    train_dataset, 
-    sampler = train_sampler, 
-    batch_size = batch_size, 
-    drop_last = drop_remainder, 
-    num_workers = 12, 
-    # shuffle = shuffle, 
+    train_dataset,
+    sampler = train_sampler,
+    batch_size = batch_size,
+    drop_last = drop_remainder,
+    num_workers = num_workers,
 )
 valid_loader = DataLoader(
-    valid_dataset, 
-    sampler = valid_sampler, 
-    batch_size = batch_size, 
-    drop_last = drop_remainder, 
-    num_workers = 12, 
-    # shuffle = False, 
+    valid_dataset,
+    sampler = valid_sampler,
+    batch_size = batch_size,
+    drop_last = drop_remainder,
+    num_workers = num_workers,
 )
 
 # log

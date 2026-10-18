@@ -1,8 +1,8 @@
 # Neptune
 
-Neptune is a research project for atmospheric-ocean coupled forecasting. The codebase contains a PyTorch training pipeline, custom model layers, data loaders, metrics, and experiment configuration files for pretraining and fine-tuning. The repository appears to be organized around a large-scale forecasting model using coupled atmospheric and oceanic inputs, with training scripts and TOML configuration files stored under `src/` and reusable library code under `library/`.
-
-This README is intended to help you set up the project, understand the expected environment, and get training started with the minimum information available from the repository itself.
+Neptune is an end-to-end data-driven framework for global ocean and sea-ice components emulation tailored for S2S timescales, up to 60 days. Neptune combines Convolutional Neural Networks (CNNs) and Spherical Fourier Neural Operators (SFNOs) to effectively capture local features and global cross-scale interactions, thereby obtaining a coherent representation of the ocean state. 
+Neptune is forced by prescribed daily atmospheric fields, and emulates ocean state variables, from temperature and salinity, to zonal and meridional currents, from sea surface height to sea ice thickness and concentration, with daily outputs at the ocean surface and through the water column.
+The codebase contains a PyTorch training pipeline, custom model layers, data loaders, metrics, and experiment configuration files for pretraining and fine-tuning.
 
 ## Project structure
 

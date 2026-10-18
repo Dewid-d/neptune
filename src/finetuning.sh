@@ -7,8 +7,8 @@
 
 # Fine-Tuning
 mpirun -np NUM_PROCS python -u src/training.py \
-    --config src/config/neptune_025.toml \
+    --config src/config/neptune-025.toml \
     --num_nodes NUM_NODES \
     --devices NUM_DEVICES_PER_NODE \
-    --ocean default \
+    --ocean oras5 \
     --atmos era5
