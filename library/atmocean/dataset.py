@@ -23,7 +23,7 @@ from atmocean.scaling import normalize
 
 
 
-class AtlasDataset(Dataset):
+class NeptuneDataset(Dataset):
     def __init__(self, 
         src: str,                # source directory to draw the numpys
         years: List[int],        # list of dataset years
@@ -146,7 +146,7 @@ class AtlasDataset(Dataset):
 
 
 
-class AtlasForecastDataset(Dataset):
+class NeptuneForecastDataset(Dataset):
     def __init__(self, 
         src: str,                # source directory to draw the numpys
         drivers: dict,           # drivers dictionary contained in numpy
@@ -231,50 +231,3 @@ class AtlasForecastDataset(Dataset):
         # remove nan values
         data = torch.nan_to_num(data, nan=self.fill_value)
         return data
-
-
-
-# class DataElement():
-#     """ Class containing data elements for each system. """
-#     def __init__(self, 
-#         data: torch.Tensor, # tensor containing both the systems stacked together with shape B x (V T Z) x H x W
-#         drivers: dict,      # drivers dictionary used to parse the passed data
-#     ):
-#         self.drivers = drivers
-#         atmos_3d_vars = drivers['atmos']['fields_3d']
-#         atmos_2d_vars = drivers['atmos']['fields_2d']
-#         ocean_3d_vars = drivers['ocean']['fields_3d']
-#         ocean_2d_vars = drivers['ocean']['fields_2d']
-#         self._atmos_3d, self._atmos_2d, self._ocean_3d, self._ocean_2d = deaggregate_systems(
-#             x = data, 
-#             atmos_3d_vars = atmos_3d_vars, atmos_2d_vars = atmos_2d_vars, 
-#             ocean_3d_vars = ocean_3d_vars, ocean_2d_vars = ocean_2d_vars, 
-#         )
-#         self._data = aggregate_systems(*self.data_tuple, is_ens=False)
-    
-#     @property
-#     def data_tuple(self):
-#         return (self.atmos_3d, self.atmos_2d, self.ocean_3d, self.ocean_2d)
-#     @property
-#     def data_stack(self):
-#         return self._data
-#     @property
-#     def atmos_3d(self):
-#         if self._atmos_3d is None: 
-#             return None
-#         return self._atmos_3d
-#     @property
-#     def atmos_2d(self):
-#         if self._atmos_2d is None: 
-#             return None
-#         return self._atmos_2d
-#     @property
-#     def ocean_3d(self):
-#         if self._ocean_3d is None: 
-#             return None
-#         return self._ocean_3d
-#     @property
-#     def ocean_2d(self):
-#         if self._ocean_2d is None: 
-#             return None
-#         return self._ocean_2d

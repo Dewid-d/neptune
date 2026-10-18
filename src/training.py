@@ -90,7 +90,7 @@ sys.path.append(LIB_DIR)
 from atmocean.losses import *
 from atmocean.models import *
 from atmocean.macros import ALL_DRIVERS
-from atmocean.dataset import AtlasDataset
+from atmocean.dataset import NeptuneDataset
 from atmocean.service import DiscordLogging
 from atmocean.callbacks import BenchmarkCSV, DiscordLog
 from atmocean.utils import log_message, get_num_parameters
@@ -448,7 +448,7 @@ log_message(log_fns, f'Model and Optimizer inizialized')
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 # initialize training and validation datasets
-train_dataset = AtlasDataset(
+train_dataset = NeptuneDataset(
     src = data_dir, 
     years = train_years, 
     drivers = drivers, 
@@ -463,7 +463,7 @@ train_dataset = AtlasDataset(
     dtype = dtype, 
     avg_atmos = avg_atmos, 
 )
-valid_dataset = AtlasDataset(
+valid_dataset = NeptuneDataset(
     src = data_dir, 
     years = valid_years, 
     drivers = drivers, 
