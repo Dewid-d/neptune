@@ -1,0 +1,17 @@
+micromamba env create -p ENV_NAME
+micromamba activate ENV_NAME
+micromamba install python==3.11.5
+micromamba install "cuda-nvcc<=11.9" -c nvidia
+micromamba install "cuda-toolkit<=11.9" -c nvidia
+micromamba install "gcc<=11"
+pip install torch==2.7.1 torchvision==0.22.1 torchaudio==2.7.1 --index-url https://download.pytorch.org/whl/cu118
+pip install lightning
+pip install timm
+pip install einops nvidia-physicsnemo==1.2.0 neuraloperator==2.0.0
+pip install toml munch pyperlin pywavelets ptwt pywt
+pip install neuraloperator==2.0.0
+pip install torch_harmonics
+pip install matplotlib cartopy
+pip install dask[distributed]
+pip install mpi4py
+pip install mlflow
