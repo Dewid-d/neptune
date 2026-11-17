@@ -108,6 +108,7 @@ def padding(x: torch.Tensor,
     else:
         return F.pad(x, padding)
 
+
 def reflect_rotate_pad(x: torch.Tensor, pad_sequence: int):
     """Applies a padding with reflection and rotation over the Poles."""
     has_batch = True if len(pad_sequence) < x.dim() * 2 - 2 else False
@@ -171,8 +172,10 @@ def physical_padding(
     x = rearrange(x, f'{to_pattern} -> {pattern}', **kwargs)
     return x
 
+
 def get_num_parameters(model: nn.Module):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
 
 def get_class_name(instance):
     return str(instance.__class__).split(".")[-1].split("'")[0]
@@ -266,12 +269,14 @@ def deaggregate_systems(x: torch.Tensor, atmos_3d_vars: list[str], atmos_2d_vars
     ocean_2d = torch.stack([x[:,OCEAN_2D_IDS[v]] for v in ocean_2d_vars], dim=1).permute(0,1,3,2,4,5) if len(ocean_2d_vars) != 0 else None # B x V x T x 1 x H x W
     return atmos_3d, atmos_2d, ocean_3d, ocean_2d
 
+
 def aggregate_systems(atmos_3d: torch.Tensor, atmos_2d: torch.Tensor, ocean_3d: torch.Tensor, ocean_2d: torch.Tensor, is_ens = False):
     # assume this shape B V T Z H W
     if is_ens: pattern = 'b v t z h w e -> b (v z) t h w e'
     else:      pattern = 'b v t z h w -> b (v z) t h w'
     x = torch.cat([rearrange(s, pattern) for s in (atmos_3d, atmos_2d, ocean_3d, ocean_2d) if s is not None], dim=1)
     return x
+
 
 def deaggregate_system_embeddings(x, res1, res2, res3, res4, reshape: bool = True):
     r1, r2, r3, r4 = res1[1] if res1 is not None else 0, res2[1] if res2 is not None else 0, res3[1] if res3 is not None else 0, res4[1] if res4 is not None else 0
@@ -286,6 +291,7 @@ def deaggregate_system_embeddings(x, res1, res2, res3, res4, reshape: bool = Tru
         x3 = rearrange(x3, 'b t z h w d -> b (t z h w) d') if x3 is not None else None
         x4 = rearrange(x4, 'b t z h w d -> b (t z h w) d') if x4 is not None else None
     return x1, x2, x3, x4
+
 
 def get_system_ids(drivers, inout: str = 'input'):
     k = 0
@@ -313,6 +319,7 @@ def get_system_ids(drivers, inout: str = 'input'):
     }
     return atmos_3d_ids, atmos_2d_ids, ocean_3d_ids, ocean_2d_ids
 
+
 def deaggregate_systems_by_drivers(x, drivers, inout: str = 'input'):
     atmos_fields_3d = drivers[inout]['atmos']['fields_3d']
     atmos_fields_2d = drivers[inout]['atmos']['fields_2d']
@@ -325,6 +332,7 @@ def deaggregate_systems_by_drivers(x, drivers, inout: str = 'input'):
     ocean_2d = torch.stack([x[:,ocean_2d_ids[v]] for v in ocean_fields_2d], dim=1).permute(0,1,3,2,4,5) if len(ocean_fields_2d) != 0 else None # B x V x T x 1 x H x W
     return atmos_3d, atmos_2d, ocean_3d, ocean_2d
 
+
 def deaggregate_system_into_variables_dict(x, drivers, inout: str = 'input'):
     atmos_fields_3d = drivers[inout]['atmos']['fields_3d']
     atmos_fields_2d = drivers[inout]['atmos']['fields_2d']
@@ -336,6 +344,7 @@ def deaggregate_system_into_variables_dict(x, drivers, inout: str = 'input'):
     ocean_3d_vars = {v : x[:,ocean_3d_ids[v]].permute(0,2,1,3,4) for v in ocean_fields_3d} if len(ocean_fields_3d) != 0 else None
     ocean_2d_vars = {v : x[:,ocean_2d_ids[v]].permute(0,2,1,3,4) for v in ocean_fields_2d} if len(ocean_fields_2d) != 0 else None
     return atmos_3d_vars, atmos_2d_vars, ocean_3d_vars, ocean_2d_vars
+
 
 def realign_drivers_dict(drivers: dict):
     drvs = {}
@@ -416,6 +425,7 @@ def compute_psd_sht(
     psd = power
     return lambda_km, psd
 
+
 def isotropic_noise(
     leading_shape: tuple[int, ...],
     lmax: int,  # length of the ℓ axis expected by isht
@@ -443,6 +453,7 @@ def isotropic_noise(
 
     return isht(alm)
 
+
 def haversine(lon1, lat1, lon2, lat2):
     """
     Calculate the great circle distance between two points
@@ -462,6 +473,7 @@ def haversine(lon1, lat1, lon2, lat2):
     c = 2 * asin(sqrt(a))
     r = 6371000 # Radius of earth in meter. Use 3956 for miles
     return c * r
+
 
 def compute_dx_dy(ds: xr.Dataset):
     latitude, longitude = ds.latitude.values, ds.longitude.values
@@ -483,9 +495,11 @@ def compute_dx_dy(ds: xr.Dataset):
     dy[ny-1,nx-1] = dy[ny-2,nx-2]
     return dx, dy
 
+
 def clean_forecasts(ds):
     ds = ds.isel(time=slice(1, None))
     return ds
+
 
 def remove_ocean_variables_suffix(ds: xr.Dataset):
     vars_rename = dict()
@@ -493,6 +507,7 @@ def remove_ocean_variables_suffix(ds: xr.Dataset):
         vars_rename[var] = '_'.join(var.split('_')[:-1])
     ds = ds.rename_vars(vars_rename)
     return ds
+
 
 # this is a new version of the prediction timedelta alignment
 def align_prediction_timedelta(ds):
@@ -510,6 +525,7 @@ def align_prediction_timedelta(ds):
     # broadcasting time (dim 'time') + offset (dim 'prediction_timedelta')
     # produce esattamente la stessa coordinata 2D che il loop+concat costruiva a mano
     return ds.assign_coords(time=ds['time'] + offset)
+
 
 def align_prediction_timedelta_optim(ds: xr.Dataset):
     lead_days = (
