@@ -1,6 +1,15 @@
+<p align="center">
+    <img src="./img/neptune_logo_no_background.png" width="250">
+</p>
+
 # Neptune
 
 Neptune is an end-to-end data-driven framework for the global ocean and sea-ice components, designed for subseasonal-to-seasonal (S2S) prediction up to 60 days. The model combines convolutional neural networks (CNNs) and spherical Fourier neural operators (SFNOs) to learn local patterns and global multiscale interactions while conditioning on daily atmospheric forcing.
+
+<p align="center">
+    <img src="./img/architecture.jpg" width="80%">
+</p>
+
 
 The codebase includes:
 
@@ -10,6 +19,19 @@ The codebase includes:
 - processing scripts for atmospheric and ocean data;
 - inference utilities to generate forecasts from trained models;
 - validation and visualization tools for benchmark and reanalysis comparisons.
+
+## Temperature and Salinity Gifs
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="./img/thetao.gif" width="100%" alt="Temperature">
+    </td>
+    <td width="50%">
+      <img src="./img/so.gif" width="100%" alt="Salinity">
+    </td>
+  </tr>
+</table>
 
 ## Repository structure
 
@@ -561,3 +583,28 @@ python src/inference.py --model neptune-1 --year 2023 --ensemble 8 --ocean defau
 - The code assumes a working MLflow installation and a writable `experiments/` directory.
 - Production usage may require tuning the TOML configuration according to the local cluster size, resolution, and dataset availability.
 - **Since they are contained in very large zarr archives (i.e., O(~100GB)), we couldn't provide Neptune forecasts over the test set.**
+
+## Results
+
+<table>
+  <tr>
+    <td width="100%">
+      <img src="./img/ocean_heat_content.png" width="100%" alt="OHC Anomaly">
+    </td>
+  </tr>
+  <tr>
+    <td width="100%">
+      <img src="./img/eddy_kinetic_energy.png" width="100%" alt="EKE">
+    </td>
+  </tr>
+  <tr>
+    <td width="100%">
+      <img src="./img/brier_score_north.png" width="100%" alt="EKE">
+    </td>
+  </tr>
+  <tr>
+    <td width="100%">
+      <img src="./img/brier_score_south.png" width="100%" alt="EKE">
+    </td>
+  </tr>
+</table>
